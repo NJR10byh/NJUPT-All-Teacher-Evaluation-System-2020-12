@@ -1,15 +1,32 @@
+var timer = null;
+
+// index.html
 function Tologin() {
   document.getElementById("loginpage").style.opacity = "0";
   setTimeout(() => {
     window.location.replace("./pages/loading.html");
   }, 800);
 }
+function ChangeTopimg1() {
+  event.stopPropagation();
+  document.getElementById("topimg").style.filter = "blur(3px)";
+}
+function ChangeTopimg2() {
+  event.stopPropagation();
+  document.getElementById("topimg").style.filter = "blur(3px)";
+}
+function Backtopimg() {
+  // console.log("aaa");
+  document.getElementById("topimg").style.filter = "blur(0px)";
+}
+
+// Exam.html
 function Show() {
   document.getElementById("Outside").style.opacity = "1";
-  console.log("aaa");
+  // console.log("aaa");
   var m = 1;
   var s = 10;
-  var timer = setInterval(function () {
+  timer = setInterval(function () {
     if (m >= 0) {
       if (s < 10) {
         $("#time").html("剩余时间: " + "&nbsp" + m + ":0" + s);
@@ -20,6 +37,7 @@ function Show() {
         alert("答题时间仅剩 1 分钟，时间到题目将自动提交！！");
       }
       if (m == 0 && s <= 0) {
+        submit();
         alert("时间到，题目已自动提交！");
         clearInterval(timer);
       }
@@ -36,12 +54,14 @@ function two_char(n) {
 }
 
 function submit() {
+  clearInterval(timer);
   var questionArray = new Array("Q1", "Q2", "Q3", "Q4", "Q5");
   var resultArray = new Array();
   var rightArray = new Array();
 
   //aryAns[]是从后端返回的数组,当点击交卷的时候,向后端请求正确答案的数组,赋值给aryAns[]即可;
   var aryAns = new Array(4, 3, 4, 3, 2); //建立储存正确答案的数组
+  var answer = new Array("D", "C", "D", "C", "B");
   for (var i = 0; i < questionArray.length; i++) {
     if (Name(questionArray[i]) != 10) {
       resultArray[i] = Name(questionArray[i]);
@@ -50,31 +70,34 @@ function submit() {
       return false;
     }
   }
-  // var right_number = 0; //计算答对的题数；
-  // for (var i = 0; i < questionArray.length; i++) {
-  //   if (aryAns[i] == resultArray[i]) {
-  //     right_number++;
-  //     rightArray[i] = 1;
-  //   } else {
-  //     rightArray[i] = 0;
-  //   }
-  // }
-  // var right_question = " ";
-  // var error_question = " ";
-  // for (var i = 0; i < rightArray.length; i++) {
-  //   if (rightArray[i] == 1) {
-  //     right_question += i + 1 + ",";
-  //   } else {
-  //     error_question += i + 1 + ",";
-  //   }
-  // }
-  // document.getElementById("right_number").innerText = right_number;
-  // if (right_question != " ") {
-  //   document.getElementById("right_question").innerText = right_question;
-  // }
-  // if (error_question != " ") {
-  //   document.getElementById("error_question").innerText = error_question;
-  // }
+  $("#btn").attr("disabled", true);
+  var right_number = 0; //计算答对的题数；
+  for (var i = 0; i < questionArray.length; i++) {
+    if (aryAns[i] == resultArray[i]) {
+      right_number++;
+      rightArray[i] = 1;
+    } else {
+      rightArray[i] = 0;
+    }
+  }
+  var right_question = " ";
+  var error_question = " ";
+  for (var i = 0; i < rightArray.length; i++) {
+    if (rightArray[i] == 1) {
+      right_question += i + 1 + ",";
+    } else {
+      error_question += i + 1 + "(" + answer[i] + ")" + ",";
+    }
+  }
+  document.getElementById("Fen").innerText = right_number * 5;
+  document.getElementById("right_number").innerText = right_number;
+  if (right_question != " ") {
+    document.getElementById("right_question").innerText = right_question;
+  }
+  if (error_question != " ") {
+    document.getElementById("error_question").innerText = error_question;
+  }
+  document.getElementById("result").style.opacity = "1";
 }
 
 function Name(name) {
